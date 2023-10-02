@@ -53,7 +53,12 @@ def trigger_dataform(request):
 
     # Trigger the dataform workflow
     print("try to trigger workflow")
+
     payload = json.dumps({"compilationResult": compliation_name})
+    # Optional, you can add InvocationConfig to the payloud
+    # https://cloud.google.com/dataform/reference/rest/v1beta1/InvocationConfig
+    # e.g. payload = json.dumps({"compilationResult": compliation_name, "InvocationConfig" : { "includedTags": ["tag1"]}})
+
     response = requests.request(
         "POST", api_workflow_invocations_url, headers=headers, data=payload
     )
