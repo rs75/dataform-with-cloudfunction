@@ -16,17 +16,25 @@ initial_wait = 10
 wait_interval = 10
 wait_iterations  = 100
 
-
 # Don't forget to update this variable after updating model. This variable is not used if you call "/compile" endpoint
 compilation_result_path = "projects/cloudfunction-dataform-demo/locations/us-central1/repositories/test/compilationResults/a6887a3c-799a-4829-a8c2-bf0d2032fa2f"
 
+password = "test"
 
 @functions_framework.http
 def trigger_dataform(request):
-
     """
     This function compiles and triggers a dataform workflow and return status.
     """
+
+    #check password
+    query_password = request.args.get('password')
+
+    if not query_password:
+        return 'Wrong password'
+    if query_password != password:
+        return 'Wrong password'
+
     #Check the URL path
     if 'compile' in request.path:
         compile = True
@@ -91,7 +99,7 @@ def trigger_dataform(request):
         )
 
     response_json = response.json()
-    invocation_id = response_json["name"]
+    invocation_id = response_json["name"].split("/")[-1]
 
     print(response.status_code)
     print(response_json)
@@ -103,17 +111,17 @@ def trigger_dataform(request):
     # Wait until the workflow is done
     for i in range (wait_iterations):
         response = requests.request(
-            "GET", api_workflow_invocations_url, headers=headers
+            "GET", f'{api_workflow_invocations_url}/{invocation_id}', headers=headers
         )
         if response.status_code != 200:
             raise Exception(
                 f"Check status failed with status code {response.status_code}: {response.text}"
             )
         response_json = response.json()
-        for row in response_json["workflowInvocations"]:
-            if row["name"] == invocation_id:
-                if row["state"] == "SUCCEEDED":
-                    return "success"
+        if response_json ["state"] == "SUCCEEDED":
+            return "success"
+        if response_json ["state"] == "FAILED":
+            return "failed"
 
         time.sleep(wait_interval)
 

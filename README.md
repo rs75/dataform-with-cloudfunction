@@ -4,7 +4,7 @@ This is a simple example of how to trigger a Dataform workflow with a Google Clo
 
 
 
-The function waits for the workflow to complete by iteratively checking its status. On completion, it will either return "success" or "timeout" based on the outcome. 
+The function waits for the workflow to complete by iteratively checking its status. On completion, it will either return "success", "failure", "timeout" or "wrong password" based on the outcome. 
 By default the dataform workflow is not compiled. If you want to complile, add "/compile" to the end of the url. If you do this the path to the compiled model is logged in the cloud function console. You can use this value to update the "compiled_model_path" variable in main.py. 
 
 
