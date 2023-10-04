@@ -33,8 +33,6 @@ def trigger_dataform(request):
     else:
         compile = False
 
-    print(".....compile: " + str(compile))
-
     # Create auth token for the api. Important: the service account that
     # runs the cloud function must have dataform.editor role
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
@@ -120,9 +118,4 @@ def trigger_dataform(request):
         time.sleep(wait_interval)
 
     return "timeout"
-
-# uncomment for local testing
-#if __name__ == "__main__":
-#    print(trigger_dataform(None))
-
 
